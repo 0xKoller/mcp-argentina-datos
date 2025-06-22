@@ -1,8 +1,20 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-
-const BASE_URL = "https://api.argentinadatos.com/v1";
+import {
+  getFeriados,
+  getEventosPresidenciales,
+  getDolaresHistorico,
+  getDolaresPorCasa,
+  getDolaresPorCasaFecha,
+  getSenadores,
+  getSenadoActas,
+  getSenadoActasPorAnio,
+  getDiputados,
+  getDiputadosActas,
+  getDiputadosActasPorAnio,
+  getSalud,
+} from "./utils/functions.js";
 
 const server = new McpServer({
   name: "mcp-argentina-datos",
@@ -11,10 +23,12 @@ const server = new McpServer({
     "MCP para obtener datos de Argentina, utilizando la API de https://argentinadatos.com/",
 });
 
+// Tools
+
+// get-feriados
 server.tool("get-feriados", "Devuelve los feriados del año", {}, async ({}) => {
   try {
-    const feriados = await fetch(`${BASE_URL}/feriados/`);
-    const data = await feriados.json();
+    const data = await getFeriados();
     if (data.length === 0) {
       return {
         content: [
@@ -41,16 +55,26 @@ server.tool("get-feriados", "Devuelve los feriados del año", {}, async ({}) => 
   }
 });
 
+// get-feriados-timeframe
 server.tool(
   "get-feriados-timeframe",
   "Devuelve los feriados de un año específico pasado por parámetro",
   {
-    year: z.number(),
+    year: z.number().describe("EJ: 2025"),
   },
   async ({ year }) => {
+    if (year === undefined) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No se ha provisto el parámetro 'year'",
+          },
+        ],
+      };
+    }
     try {
-      const feriados = await fetch(`${BASE_URL}/feriados/${year}`);
-      const data = await feriados.json();
+      const data = await getFeriados(year);
       if (data.length === 0) {
         return {
           content: [
@@ -78,14 +102,14 @@ server.tool(
   }
 );
 
+// eventos-presidenciales
 server.tool(
   "eventos-presidenciales",
   "Devuelve los eventos presidenciales",
   {},
   async ({}) => {
     try {
-      const eventos = await fetch(`${BASE_URL}/eventos/presidenciales/`);
-      const data = await eventos.json();
+      const data = await getEventosPresidenciales();
       return {
         content: [
           {
@@ -105,14 +129,14 @@ server.tool(
   }
 );
 
+// dolares-historico
 server.tool(
   "dolares-historico",
   "Devuelve las cotizaciones de todas las casas de cambio.",
   {},
   async ({}) => {
     try {
-      const dolares = await fetch(`${BASE_URL}/cotizaciones/dolares`);
-      const data = await dolares.json();
+      const data = await getDolaresHistorico();
       if (data.length === 0) {
         return {
           content: [
@@ -142,6 +166,7 @@ server.tool(
   }
 );
 
+// dolares-por-casa
 server.tool(
   "dolares-por-casa",
   "Devuelve las cotizaciones del dólar de la casa de cambio especificada.",
@@ -149,9 +174,18 @@ server.tool(
     casa: z.string().describe("EJ: blue, oficial, cripto, etc."),
   },
   async ({ casa }) => {
+    if (!casa) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No se ha provisto el parámetro 'casa'",
+          },
+        ],
+      };
+    }
     try {
-      const dolares = await fetch(`${BASE_URL}/cotizaciones/dolares/${casa}`);
-      const data = await dolares.json();
+      const data = await getDolaresPorCasa(casa);
       if (data.length === 0) {
         return {
           content: [
@@ -184,19 +218,43 @@ server.tool(
   }
 );
 
+// dolares-por-casa-fecha
 server.tool(
   "dolares-por-casa-fecha",
   "Devuelve la cotización del dólar de la casa de cambio especificada en la fecha indicada (en formato YYYY/MM/DD).",
   {
     casa: z.string().describe("EJ: blue, oficial, cripto, etc."),
-    fecha: z.string().describe("EJ: 2025/01/01"),
+    fecha: z
+      .string()
+      .regex(
+        /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/,
+        "El formato de la fecha debe ser YYYY/MM/DD"
+      )
+      .describe("EJ: 2025/01/01"),
   },
   async ({ casa, fecha }) => {
+    if (!casa) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No se ha provisto el parámetro 'casa'",
+          },
+        ],
+      };
+    }
+    if (!fecha) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No se ha provisto el parámetro 'fecha'",
+          },
+        ],
+      };
+    }
     try {
-      const dolares = await fetch(
-        `${BASE_URL}/cotizaciones/dolares/${casa}/${fecha}`
-      );
-      const data = await dolares.json();
+      const data = await getDolaresPorCasaFecha(casa, fecha);
       if (data.length === 0) {
         return {
           content: [
@@ -229,10 +287,10 @@ server.tool(
   }
 );
 
+// senadores
 server.tool("senadores", "Devuelve los senadores.", {}, async ({}) => {
   try {
-    const senadores = await fetch(`${BASE_URL}/senado/senadores`);
-    const data = await senadores.json();
+    const data = await getSenadores();
     if (data.length === 0) {
       return {
         content: [{ type: "text", text: "No se encontraron senadores" }],
@@ -254,10 +312,10 @@ server.tool("senadores", "Devuelve los senadores.", {}, async ({}) => {
   }
 });
 
+// senado-actas
 server.tool("senado-actas", "Devuelve las actas del senado", {}, async ({}) => {
   try {
-    const actas = await fetch(`${BASE_URL}/senado/actas`);
-    const data = await actas.json();
+    const data = await getSenadoActas();
     if (data.length === 0) {
       return {
         content: [{ type: "text", text: "No se encontraron actas" }],
@@ -281,16 +339,26 @@ server.tool("senado-actas", "Devuelve las actas del senado", {}, async ({}) => {
   }
 });
 
+// senado-actas-por-anio
 server.tool(
   "senado-actas-por-anio",
   "Devuelve las actas del senado de un año específico",
   {
-    anio: z.number(),
+    anio: z.number().describe("EJ: 2025"),
   },
   async ({ anio }) => {
+    if (anio === undefined) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No se ha provisto el parámetro 'anio'",
+          },
+        ],
+      };
+    }
     try {
-      const actas = await fetch(`${BASE_URL}/senado/actas/${anio}`);
-      const data = await actas.json();
+      const data = await getSenadoActasPorAnio(anio);
       if (data.length === 0) {
         return {
           content: [
@@ -320,10 +388,10 @@ server.tool(
   }
 );
 
+// diputados
 server.tool("diputados", "Devuelve los diputados.", {}, async ({}) => {
   try {
-    const diputados = await fetch(`${BASE_URL}/diputados/diputados`);
-    const data = await diputados.json();
+    const data = await getDiputados();
     if (data.length === 0) {
       return {
         content: [{ type: "text", text: "No se encontraron diputados" }],
@@ -345,16 +413,26 @@ server.tool("diputados", "Devuelve los diputados.", {}, async ({}) => {
   }
 });
 
+// diputados-actas-por-anio
 server.tool(
   "diputados-actas-por-anio",
   "Devuelve las actas de los diputados de un año específico",
   {
-    anio: z.number(),
+    anio: z.number().describe("EJ: 2025"),
   },
   async ({ anio }) => {
+    if (anio === undefined) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No se ha provisto el parámetro 'anio'",
+          },
+        ],
+      };
+    }
     try {
-      const actas = await fetch(`${BASE_URL}/diputados/actas/${anio}`);
-      const data = await actas.json();
+      const data = await getDiputadosActasPorAnio(anio);
       if (data.length === 0) {
         return {
           content: [
@@ -384,14 +462,14 @@ server.tool(
   }
 );
 
+// diputados-actas
 server.tool(
   "diputados-actas",
   "Devuelve las actas de los diputados",
   {},
   async ({}) => {
     try {
-      const actas = await fetch(`${BASE_URL}/diputados/actas`);
-      const data = await actas.json();
+      const data = await getDiputadosActas();
       if (data.length === 0) {
         return {
           content: [
@@ -418,14 +496,14 @@ server.tool(
   }
 );
 
+// salud
 server.tool(
   "salud",
   "Devuelve el estado de la salud de la API",
   {},
   async ({}) => {
     try {
-      const response = await fetch(`${BASE_URL}/estado`);
-      const data = await response.json();
+      const data = await getSalud();
       if (data.estado === "Correcto") {
         return {
           content: [

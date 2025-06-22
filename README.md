@@ -12,13 +12,19 @@ pnpm install
 
 ## Uso
 
+Para iniciar en modo desarrollo, ejecutá: (recomendado)
+
+```bash
+pnpm dev
+```
+
 Para iniciar el servidor, ejecutá:
 
 ```bash
-npx -y tsx main.ts
+pnpm start
 ```
 
-Para inspeccionar el servidor, ejecutá: (recomendado)
+Para inspeccionar el servidor, ejecutá:
 
 ```bash
 npx -y @modelcontextprotocol/inspector npx -y tsx main.ts

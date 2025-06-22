@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "tsx main.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,5 +15,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.0",
     "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.3"
   }
 }

@@ -28,8 +28,9 @@ server.tool("get-feriados", "Devuelve los feriados del año", {}, async ({}) => 
     return {
       content: [
         {
-          type: "array",
-          array: data,
+          type: "text",
+          text: JSON.stringify(data, null, 2),
+          mimeType: "application/json",
         },
       ],
     };
@@ -61,7 +62,13 @@ server.tool(
         };
       }
       return {
-        content: [{ type: "array", array: data }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(data, null, 2),
+            mimeType: "application/json",
+          },
+        ],
       };
     } catch (error) {
       return {
@@ -80,7 +87,13 @@ server.tool(
       const eventos = await fetch(`${BASE_URL}/eventos/presidenciales/`);
       const data = await eventos.json();
       return {
-        content: [{ type: "array", array: data }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(data, null, 2),
+            mimeType: "application/json",
+          },
+        ],
       };
     } catch (error) {
       return {
@@ -108,7 +121,13 @@ server.tool(
         };
       }
       return {
-        content: [{ type: "array", array: data }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(data, null, 2),
+            mimeType: "application/json",
+          },
+        ],
       };
     } catch (error) {
       return {
@@ -144,7 +163,13 @@ server.tool(
         };
       }
       return {
-        content: [{ type: "array", array: data }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(data, null, 2),
+            mimeType: "application/json",
+          },
+        ],
       };
     } catch (error) {
       return {
@@ -183,7 +208,13 @@ server.tool(
         };
       }
       return {
-        content: [{ type: "object", object: data }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(data, null, 2),
+            mimeType: "application/json",
+          },
+        ],
       };
     } catch (error) {
       return {
@@ -208,7 +239,13 @@ server.tool("senadores", "Devuelve los senadores.", {}, async ({}) => {
       };
     }
     return {
-      content: [{ type: "array", array: data }],
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(data, null, 2),
+          mimeType: "application/json",
+        },
+      ],
     };
   } catch (error) {
     return {
@@ -227,7 +264,13 @@ server.tool("senado-actas", "Devuelve las actas del senado", {}, async ({}) => {
       };
     }
     return {
-      content: [{ type: "array", array: data }],
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(data, null, 2),
+          mimeType: "application/json",
+        },
+      ],
     };
   } catch (error) {
     return {
@@ -259,7 +302,13 @@ server.tool(
         };
       }
       return {
-        content: [{ type: "array", array: data }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(data, null, 2),
+            mimeType: "application/json",
+          },
+        ],
       };
     } catch (error) {
       return {
@@ -281,7 +330,13 @@ server.tool("diputados", "Devuelve los diputados.", {}, async ({}) => {
       };
     }
     return {
-      content: [{ type: "array", array: data }],
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(data, null, 2),
+          mimeType: "application/json",
+        },
+      ],
     };
   } catch (error) {
     return {
@@ -311,7 +366,13 @@ server.tool(
         };
       }
       return {
-        content: [{ type: "array", array: data }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(data, null, 2),
+            mimeType: "application/json",
+          },
+        ],
       };
     } catch (error) {
       return {
@@ -339,7 +400,13 @@ server.tool(
         };
       }
       return {
-        content: [{ type: "array", array: data }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(data, null, 2),
+            mimeType: "application/json",
+          },
+        ],
       };
     } catch (error) {
       return {

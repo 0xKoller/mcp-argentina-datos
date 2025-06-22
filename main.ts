@@ -21,6 +21,87 @@ const server = new McpServer({
   version: "1.0.0",
   description:
     "MCP para obtener datos de Argentina, utilizando la API de https://argentinadatos.com/",
+  tools: [
+    {
+      name: "get-feriados",
+      description: "Devuelve los feriados del año",
+      parameters: {},
+    },
+    {
+      name: "get-feriados-timeframe",
+      description: "Devuelve los feriados del año",
+      parameters: {
+        year: z.number().describe("EJ: 2025"),
+      },
+    },
+    {
+      name: "eventos-presidenciales",
+      description: "Devuelve los eventos presidenciales",
+      parameters: {},
+    },
+    {
+      name: "dolares-historico",
+      description: "Devuelve las cotizaciones de todas las casas de cambio.",
+      parameters: {},
+    },
+    {
+      name: "dolares-por-casa",
+      description:
+        "Devuelve las cotizaciones del dólar de la casa de cambio especificada.",
+      parameters: {
+        casa: z.string().describe("EJ: blue, oficial, cripto, etc."),
+      },
+    },
+    {
+      name: "dolares-por-casa-fecha",
+      description:
+        "Devuelve la cotización del dólar de la casa de cambio especificada en la fecha indicada (en formato YYYY/MM/DD).",
+      parameters: {
+        casa: z.string().describe("EJ: blue, oficial, cripto, etc."),
+        fecha: z.string().describe("EJ: 2025/01/01"),
+      },
+    },
+    {
+      name: "senadores",
+      description: "Devuelve los senadores.",
+      parameters: {},
+    },
+    {
+      name: "senado-actas",
+      description: "Devuelve las actas del senado",
+      parameters: {},
+    },
+    {
+      name: "senado-actas-por-anio",
+      description: "Devuelve las actas del senado de un año específico",
+      parameters: {
+        anio: z.number().describe("EJ: 2025"),
+      },
+    },
+    {
+      name: "diputados",
+      description: "Devuelve los diputados.",
+      parameters: {},
+    },
+
+    {
+      name: "diputados-actas-por-anio",
+      description: "Devuelve las actas de los diputados de un año específico",
+      parameters: {
+        anio: z.number().describe("EJ: 2025"),
+      },
+    },
+    {
+      name: "diputados-actas",
+      description: "Devuelve las actas de los diputados",
+      parameters: {},
+    },
+    {
+      name: "salud",
+      description: "Devuelve el estado de la salud de la API",
+      parameters: {},
+    },
+  ],
 });
 
 // Tools
